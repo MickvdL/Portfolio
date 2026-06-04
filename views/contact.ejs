@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title>Contact — Mick van der Linden</title>
+</head>
+<body>
+
+    <%- include('partials/nav') %>
+
+    <!-- ===== Contact ===== -->
+    <section class="contact-section">
+
+        <!-- Memoji cursor (desktop only) -->
+        <div class="memoji-cursor" id="memojiCursor" aria-hidden="true">
+            <img src="/assets/videos/Memoji.gif" alt="">
+        </div>
+
+        <div class="contact-inner">
+
+            <!-- Heading -->
+            <div class="contact-heading">
+                <p class="contact-label">Contact</p>
+                <h1 class="contact-title">Let's connect and share your ideas</h1>
+            </div>
+
+            <!-- Contact list -->
+            <div class="contact-list">
+
+                <a href="https://wa.me/31612345678" target="_blank" rel="noopener" class="contact-item" data-contact>
+                    <div class="contact-item-left">
+                        <span class="contact-number">01</span>
+                        <h2 class="contact-name">Whatsapp</h2>
+                    </div>
+                    <div class="contact-cta">
+                        <span>Text me</span>
+                        <img src="/assets/icons/general/Arrow.svg" alt="" aria-hidden="true" class="contact-arrow">
+                    </div>
+                </a>
+
+                <a href="mailto:mln@kpnplanet.nl" class="contact-item" data-contact target="_blank" rel="noopener noreferrer">
+                    <div class="contact-item-left">
+                        <span class="contact-number">02</span>
+                        <h2 class="contact-name">E-mail</h2>
+                    </div>
+                    <div class="contact-cta">
+                        <span>Mail me</span>
+                        <img src="/assets/icons/general/Arrow.svg" alt="" aria-hidden="true" class="contact-arrow">
+                    </div>
+                </a>
+
+                <a href="/assets/CV-MickvanderLinden-v3.pdf" download class="contact-item" data-contact target="_blank" rel="noopener noreferrer">
+                    <div class="contact-item-left">
+                        <span class="contact-number">03</span>
+                        <h2 class="contact-name">Resume</h2>
+                    </div>
+                    <div class="contact-cta">
+                        <span>Download</span>
+                        <img src="/assets/icons/general/Arrow.svg" alt="" aria-hidden="true" class="contact-arrow">
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Video ===== -->
+    <div class="contact-video-wrap">
+        <video class="contact-video" autoplay muted loop playsinline preload="metadata">
+            <source src="/assets/videos/abstractglass.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <%- include('partials/footer') %>
+
+    <script>
+        // Memoji cursor — desktop only
+        const memoji = document.getElementById('memojiCursor');
+        const items  = document.querySelectorAll('[data-contact]');
+
+        function isDesktop() {
+            return window.matchMedia('(min-width: 1200px)').matches;
+        }
+
+        document.addEventListener('mousemove', function (e) {
+            if (!isDesktop()) return;
+            memoji.style.left = e.clientX + 'px';
+            memoji.style.top  = e.clientY + 'px';
+        });
+
+        items.forEach(function (item) {
+            item.addEventListener('mouseenter', function () {
+                if (!isDesktop()) return;
+                memoji.classList.add('memoji-cursor--visible');
+            });
+            item.addEventListener('mouseleave', function () {
+                memoji.classList.remove('memoji-cursor--visible');
+            });
+        });
+    </script>
+
+</body>
+</html>

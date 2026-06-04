@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title><%= title %></title>
+</head>
+<body>
+
+    <%- include('partials/nav') %>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata">
+            <source src="/assets/videos/liquidbulb.mp4" type="video/mp4">
+        </video>
+        <h1 class="hero-title" id="heroTitle">MICK</h1>
+    </section>
+
+    <!-- ===== Projects ===== -->
+    <section class="projects-section">
+        <h2 class="projects-heading">Projects</h2>
+        <div class="projects-grid">
+            <% projects.forEach(function(project, index) { %>
+            <a href="/projects/<%= project.slug %>" class="project-card<%= index >= 4 ? ' project-card--hidden' : '' %>">
+                <div class="project-image-wrap">
+                    <img
+                        src="<%= project.image %>"
+                        alt="<%= project.title %>"
+                        loading="lazy"
+                    />
+                    <div class="project-overlay">
+                        <span class="project-overlay-label"><%= project.title %></span>
+                    </div>
+                </div>
+                <p class="project-title"><%= project.title %></p>
+            </a>
+            <% }) %>
+        </div>
+
+        <% if (projects.length > 4) { %>
+        <div class="load-more-wrap" id="loadMoreWrap">
+            <button class="btn-load-more" id="loadMoreBtn">Load more</button>
+            <button class="btn-load-more btn-show-less" id="showLessBtn" style="display:none;">Show less</button>
+        </div>
+        <% } %>
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <%- include('partials/footer') %>
+
+    <script>
+        // --- MICK scroll colour: white → #262626 ---
+        const heroTitle = document.getElementById('heroTitle');
+        const hero      = document.querySelector('.hero');
+
+        function updateTitleColor() {
+            const progress = Math.min(window.scrollY / (hero.offsetHeight * 0.4), 1);
+            const channel  = Math.round(255 - (255 - 38) * progress);
+            heroTitle.style.color = `rgb(${channel}, ${channel}, ${channel})`;
+        }
+
+        window.addEventListener('scroll', updateTitleColor, { passive: true });
+
+        // --- Load more / Show less ---
+        const loadMoreBtn  = document.getElementById('loadMoreBtn');
+        const showLessBtn  = document.getElementById('showLessBtn');
+        const hiddenCards  = document.querySelectorAll('.project-card--hidden');
+
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function () {
+                hiddenCards.forEach(function (card) {
+                    card.classList.remove('project-card--hidden');
+                });
+                loadMoreBtn.style.display = 'none';
+                showLessBtn.style.display = '';
+            });
+        }
+
+        if (showLessBtn) {
+            showLessBtn.addEventListener('click', function () {
+                hiddenCards.forEach(function (card) {
+                    card.classList.add('project-card--hidden');
+                });
+                showLessBtn.style.display = 'none';
+                loadMoreBtn.style.display = '';
+            });
+        }
+    </script>
+
+</body>
+</html>
