@@ -181,16 +181,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/debug", (req, res) => {
-    const fs = require("fs");
-    const assetsPath = path.join(__dirname, "assets");
-    try {
-        const files = fs.readdirSync(assetsPath);
-        res.json({ __dirname, assetsPath, files, exists: true });
-    } catch(e) {
-        res.json({ __dirname, assetsPath, error: e.message, exists: false });
-    }
-});
 
 app.get("/", (req, res) => {
     res.render("index", { title: "Home", projects });
