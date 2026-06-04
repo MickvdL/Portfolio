@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title><%= project.title %> — Mick van der Linden</title>
+</head>
+<body>
+
+    <%- include('partials/nav') %>
+
+    <!-- ===== Hero ===== -->
+    <section class="pd-hero">
+        <div class="pd-hero-inner">
+
+            <!-- Title + description -->
+            <div class="pd-hero-text">
+                <p class="pd-label"><%= project.title %></p>
+                <h1 class="pd-description"><%= project.description %></h1>
+            </div>
+
+            <!-- Meta: client + tools -->
+            <div class="pd-meta">
+
+                <% if (project.client) { %>
+                <div class="pd-meta-block">
+                    <p class="pd-meta-label">Client</p>
+                    <a href="<%= project.client.url %>" class="pd-client-pill" target="_blank" rel="noopener noreferrer">
+                        <span><%= project.client.name %></span>
+                        <img src="/assets/icons/general/Arrow.svg" alt="" aria-hidden="true" class="pd-client-arrow">
+                    </a>
+                </div>
+                <% } %>
+
+                <% if (project.tools && project.tools.length) { %>
+                <div class="pd-meta-block">
+                    <p class="pd-meta-label">Tools used</p>
+                    <div class="pd-tooltags" id="pdTooltags">
+                        <% project.tools.forEach(function(key) { %>
+                        <% var tool = toolMap[key]; %>
+                        <% if (tool) { %>
+                        <span class="skill-tag" data-category="<%= tool.category %>" data-key="<%= key %>">
+                            <img src="/assets/icons/tools/<%= tool.icon %>" alt="<%= tool.label %>">
+                            <%= tool.label %>
+                        </span>
+                        <% } %>
+                        <% }) %>
+                    </div>
+                </div>
+                <% } %>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Hero media (full bleed) ===== -->
+    <div class="pd-hero-media">
+        <% if (project.heroMedia.type === 'video') { %>
+        <%
+            var heroExt  = project.heroMedia.src.split('.').pop().toLowerCase();
+            var heroMime = heroExt === 'mov' ? 'video/quicktime' : 'video/mp4';
+        %>
+        <video autoplay muted loop playsinline preload="metadata">
+            <source src="<%= project.heroMedia.src %>" type="<%= heroMime %>">
+        </video>
+        <% } else { %>
+        <img src="<%= project.heroMedia.src %>" alt="<%= project.title %>">
+        <% } %>
+    </div>
+
+    <!-- ===== Content blocks ===== -->
+    <% if (project.content && project.content.length) { %>
+    <section class="pd-content">
+        <% project.content.forEach(function(block) { %>
+
+        <% if (block.type === 'video' && block.text) { %>
+        <%/* Video + tekst naast elkaar */%>
+        <div class="pd-media-wrap pd-media-wrap--with-text pd-media-wrap--text-<%= block.text.side %>">
+            <div class="pd-media-text">
+                <h3 class="pd-media-text-title"><%= block.text.title %></h3>
+                <p class="pd-media-text-body"><%= block.text.body %></p>
+            </div>
+            <div class="pd-video-container">
+                <%
+                    var blockExt  = block.src.split('.').pop().toLowerCase();
+                    var blockMime = blockExt === 'mov' ? 'video/quicktime' : 'video/mp4';
+                %>
+                <video autoplay muted loop playsinline preload="none">
+                    <source src="<%= block.src %>" type="<%= blockMime %>">
+                </video>
+                <button class="pd-video-toggle" aria-label="Pause">
+                    <svg class="pd-toggle-pause" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="5" width="4" height="14" rx="1" fill="white"/>
+                        <rect x="14" y="5" width="4" height="14" rx="1" fill="white"/>
+                    </svg>
+                    <svg class="pd-toggle-play" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none">
+                        <polygon points="6,4 20,12 6,20" fill="white"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <% } else if (block.type === 'video') { %>
+        <%/* Video zonder tekst */%>
+        <div class="pd-media-wrap pd-media-wrap--<%= block.align %>">
+            <div class="pd-video-container">
+                <%
+                    var blockExt  = block.src.split('.').pop().toLowerCase();
+                    var blockMime = blockExt === 'mov' ? 'video/quicktime' : 'video/mp4';
+                %>
+                <video autoplay muted loop playsinline preload="none">
+                    <source src="<%= block.src %>" type="<%= blockMime %>">
+                </video>
+                <button class="pd-video-toggle" aria-label="Pause">
+                    <svg class="pd-toggle-pause" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="5" width="4" height="14" rx="1" fill="white"/>
+                        <rect x="14" y="5" width="4" height="14" rx="1" fill="white"/>
+                    </svg>
+                    <svg class="pd-toggle-play" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none">
+                        <polygon points="6,4 20,12 6,20" fill="white"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <% } else { %>
+        <%/* Afbeelding */%>
+        <div class="pd-media-wrap pd-media-wrap--<%= block.align %>">
+            <img src="<%= block.src %>" alt="" loading="lazy">
+        </div>
+        <% } %>
+
+        <% }) %>
+    </section>
+    <% } %>
+
+    <!-- ===== Footer ===== -->
+    <%- include('partials/footer') %>
+
+    <script>
+    // ── Tooltag floating cursor (zelfde systeem als about.ejs) ──
+    const CATEGORY_CURSORS = {
+        development: '/assets/icons/general/Cursor pink.svg',
+        design:      '/assets/icons/general/Cursor purple.svg',
+        workflow:    '/assets/icons/general/Cursor orange.svg'
+    };
+    const CATEGORY_COLORS = {
+        development: '#FF3366',
+        design:      '#923AFF',
+        workflow:    '#FF6A00'
+    };
+    const CATEGORY_LABELS = {
+        development: 'Development',
+        design:      'Design',
+        workflow:    'Workflow'
+    };
+
+    const pdTags      = document.querySelectorAll('#pdTooltags .skill-tag');
+    const pdContainer = document.getElementById('pdTooltags');
+    const isTouch     = window.matchMedia('(hover: none)').matches;
+
+    // Desktop floating cursor
+    if (!isTouch && pdTags.length) {
+        const fc = document.createElement('div');
+        fc.className = 'floating-cursor';
+        fc.setAttribute('aria-hidden', 'true');
+        fc.innerHTML = '<img class="floating-cursor__icon" src="" alt=""><span class="floating-cursor__label"></span>';
+        document.body.appendChild(fc);
+
+        const fcIcon  = fc.querySelector('.floating-cursor__icon');
+        const fcLabel = fc.querySelector('.floating-cursor__label');
+
+        document.addEventListener('mousemove', (e) => {
+            if (!fc.classList.contains('floating-cursor--visible')) return;
+            fc.style.left = e.clientX + 'px';
+            fc.style.top  = e.clientY + 'px';
+        });
+
+        pdTags.forEach(tag => {
+            tag.addEventListener('mouseenter', () => {
+                const cat = tag.dataset.category;
+                fcIcon.src              = CATEGORY_CURSORS[cat];
+                fcLabel.textContent     = CATEGORY_LABELS[cat];
+                fcLabel.style.background = CATEGORY_COLORS[cat];
+                fc.classList.add('floating-cursor--visible');
+                pdContainer.classList.add('hide-cursor');
+            });
+            tag.addEventListener('mouseleave', (e) => {
+                const next = e.relatedTarget;
+                if (!next || (!next.classList.contains('skill-tag') && !next.closest('.skill-tag'))) {
+                    fc.classList.remove('floating-cursor--visible');
+                    pdContainer.classList.remove('hide-cursor');
+                }
+            });
+        });
+    }
+
+    // Mobile badge
+    if (isTouch && pdTags.length) {
+        const badge = document.createElement('span');
+        badge.className = 'tag-cursor-badge';
+        badge.setAttribute('aria-hidden', 'true');
+        badge.innerHTML = '<img class="tag-cursor-badge__icon" src="" alt=""><span class="tag-cursor-badge__label"></span>';
+        document.body.appendChild(badge);
+
+        const badgeIcon  = badge.querySelector('.tag-cursor-badge__icon');
+        const badgeLabel = badge.querySelector('.tag-cursor-badge__label');
+        let activeBadge  = null;
+
+        pdTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                if (activeBadge === tag) {
+                    badge.style.display = 'none';
+                    activeBadge = null;
+                } else {
+                    const cat = tag.dataset.category;
+                    badgeIcon.src               = CATEGORY_CURSORS[cat];
+                    badgeLabel.textContent      = CATEGORY_LABELS[cat];
+                    badgeLabel.style.background = CATEGORY_COLORS[cat];
+                    const rect = tag.getBoundingClientRect();
+                    badge.style.left    = (rect.right - 10) + 'px';
+                    badge.style.top     = (rect.top + rect.height / 2) + 'px';
+                    badge.style.display = 'flex';
+                    activeBadge = tag;
+                }
+            });
+        });
+    }
+
+    // ── Pause / play knoppen ──
+    document.querySelectorAll('.pd-video-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const video     = btn.closest('.pd-video-container').querySelector('video');
+            const pauseIcon = btn.querySelector('.pd-toggle-pause');
+            const playIcon  = btn.querySelector('.pd-toggle-play');
+            if (video.paused) {
+                video.play();
+                pauseIcon.style.display = '';
+                playIcon.style.display  = 'none';
+                btn.setAttribute('aria-label', 'Pause');
+            } else {
+                video.pause();
+                pauseIcon.style.display = 'none';
+                playIcon.style.display  = '';
+                btn.setAttribute('aria-label', 'Play');
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
